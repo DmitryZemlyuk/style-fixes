@@ -3,6 +3,12 @@
 
     const STYLE_ID = 'ui-fixes-style';
 
+    function getScriptBasePath() {
+        const script = document.currentScript;
+        if (!script || !script.src) return null;
+        return script.src.substring(0, script.src.lastIndexOf('/') + 1);
+    }
+
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
 
@@ -18,14 +24,16 @@
     }
 
     function replaceMarvelLogo() {
-        const logoUrl = 'https://dmitryzemlyuk.github.io/style-fixes/logo.png';
+        const basePath = getScriptBasePath();
+        if (!basePath) return;
+
+        const logoUrl = basePath + 'logo.png';
 
         document.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
-            if (img.dataset.marvelReplaced) return;
-            img.dataset.marvelReplaced = '1';
+            if (img.src === logoUrl) return;
 
             img.src = logoUrl;
-            img.srcset = logoUrl;
+            img.removeAttribute('srcset');
         });
     }
 
@@ -39,4 +47,8 @@
     if (window.Lampa && Lampa.Listener) {
         Lampa.Listener.follow('app', apply);
     }
+
+    setTimeout(apply, 500);
+    setTimeout(apply, 1500);
+
 })();
