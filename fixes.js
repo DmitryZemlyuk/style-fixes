@@ -17,15 +17,10 @@
                 padding-right: 1px;
             }
 
-            /* Network logo spacing fix */
-            .applecation__network {
-                display: inline-block;
-                margin-bottom: 1px;
-            }
-
-            /* Marvel Studios — remove forced invert */
+            /* Marvel Studios — remove forced invert + spacing fix */
             img[alt="Marvel Studios"] {
                 filter: none !important;
+                margin-bottom: 1px;
             }
         `;
         document.head.appendChild(style);
