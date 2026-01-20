@@ -1,61 +1,60 @@
 (function () {
     'use strict';
 
+    const STYLE_ID = 'ui-fixes-style';
+
     function injectStyle() {
-        if (document.getElementById('ui-fixes-style')) return;
+        if (document.getElementById(STYLE_ID)) return;
 
         const style = document.createElement('style');
-        style.id = 'ui-fixes-style';
+        style.id = STYLE_ID;
         style.textContent = `
             /* SVG padding fix */
             .applecation__info.show > span > div > svg {
                 padding-right: 1px;
             }
 
-            /* Marvel Studios split logo */
+            /* Marvel Studios — split logo (right part white) */
             img[alt="Marvel Studios"] {
                 position: relative;
                 display: inline-block;
-                width: auto;
-                clip-path: inset(0 50% 0 0); /* левая половина */
+                clip-path: inset(0 50% 0 0);
             }
 
             img[alt="Marvel Studios"]::after {
                 content: "";
                 position: absolute;
-                top: 0;
-                right: 0;
-                width: 100%;
-                height: 100%;
+                inset: 0;
                 background-image: inherit;
                 background-repeat: no-repeat;
-                background-size: contain;
-                background-position: center;
-                clip-path: inset(0 0 0 50%); /* правая половина */
+                background-size: 200% 100%;
+                background-position: right center;
+                clip-path: inset(0 0 0 50%);
                 filter: brightness(0) invert(1);
                 pointer-events: none;
             }
         `;
+
         document.head.appendChild(style);
     }
 
     function patchMarvel() {
         document.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
-            if (img.dataset.patched) return;
-            img.dataset.patched = '1';
+            if (img.dataset.splitPatched) return;
+            img.dataset.splitPatched = '1';
 
-            // Нужно, чтобы background-image совпадал с src
             img.style.backgroundImage = `url("${img.src}")`;
         });
     }
 
-    injectStyle();
-    patchMarvel();
+    function apply() {
+        injectStyle();
+        patchMarvel();
+    }
+
+    apply();
 
     if (window.Lampa && Lampa.Listener) {
-        Lampa.Listener.follow('app', () => {
-            injectStyle();
-            patchMarvel();
-        });
+        Lampa.Listener.follow('app', apply);
     }
 })();
