@@ -2,8 +2,8 @@
     'use strict';
 
     const STYLE_ID = 'ui-fixes-style';
-    const MARVEL_LOGO =
-        'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b65effc6-45d7-4225-8e94-82458b9ca149/df00rkf-8d8449d3-c7c3-49fa-b97d-7aa53f79e698.png/v1/fill/w_1280,h_286/marvel_studios_2016_logo_svg_by_hugo150pro_df00rkf-fullview.png';
+
+    const MARVEL_LOGO = './logo.png';
 
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
@@ -36,7 +36,7 @@
 
     apply();
 
-    if (window.Lampa && window.Lampa.Listener) {
+    if (window.Lampa && Lampa.Listener) {
         Lampa.Listener.follow('app', apply);
     }
 })();
