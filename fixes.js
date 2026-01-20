@@ -14,27 +14,32 @@
                 padding-right: 1px;
             }
 
-            /* Marvel Studios split wrapper */
+            /* Marvel Studios split logo */
             .marvel-split {
                 position: relative;
                 display: inline-block;
+                line-height: 0;
             }
 
-            .marvel-split img {
+            /* ORIGINAL image — always untouched */
+            .marvel-split > img {
                 display: block;
+                filter: none !important;
             }
 
-            .marvel-split .marvel-right {
+            /* Right (white) half wrapper */
+            .marvel-right {
                 position: absolute;
                 top: 0;
-                left: 50%;
+                right: 0;
                 width: 50%;
                 height: 100%;
                 overflow: hidden;
                 pointer-events: none;
             }
 
-            .marvel-split .marvel-right img {
+            /* Cloned image inside right half */
+            .marvel-right img {
                 position: absolute;
                 top: 0;
                 left: -50%;
@@ -56,13 +61,13 @@
             const right = document.createElement('span');
             right.className = 'marvel-right';
 
-            const rightImg = img.cloneNode(true);
+            const clone = img.cloneNode(true);
 
-            right.appendChild(rightImg);
+            right.appendChild(clone);
 
             img.parentNode.insertBefore(wrapper, img);
-            wrapper.appendChild(img);
-            wrapper.appendChild(right);
+            wrapper.appendChild(img);     // original (left)
+            wrapper.appendChild(right);   // white right half
         });
     }
 
