@@ -14,36 +14,55 @@
                 padding-right: 1px;
             }
 
-            /* Marvel Studios — split logo (right part white) */
-            img[alt="Marvel Studios"] {
+            /* Marvel Studios split wrapper */
+            .marvel-split {
                 position: relative;
                 display: inline-block;
-                clip-path: inset(0 50% 0 0);
             }
 
-            img[alt="Marvel Studios"]::after {
-                content: "";
+            .marvel-split img {
+                display: block;
+            }
+
+            .marvel-split .marvel-right {
                 position: absolute;
-                inset: 0;
-                background-image: inherit;
-                background-repeat: no-repeat;
-                background-size: 200% 100%;
-                background-position: right center;
-                clip-path: inset(0 0 0 50%);
-                filter: brightness(0) invert(1);
+                top: 0;
+                left: 50%;
+                width: 50%;
+                height: 100%;
+                overflow: hidden;
                 pointer-events: none;
             }
-        `;
 
+            .marvel-split .marvel-right img {
+                position: absolute;
+                top: 0;
+                left: -50%;
+                width: 100%;
+                height: auto;
+                filter: brightness(0) invert(1);
+            }
+        `;
         document.head.appendChild(style);
     }
 
     function patchMarvel() {
         document.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
-            if (img.dataset.splitPatched) return;
-            img.dataset.splitPatched = '1';
+            if (img.closest('.marvel-split')) return;
 
-            img.style.backgroundImage = `url("${img.src}")`;
+            const wrapper = document.createElement('span');
+            wrapper.className = 'marvel-split';
+
+            const right = document.createElement('span');
+            right.className = 'marvel-right';
+
+            const rightImg = img.cloneNode(true);
+
+            right.appendChild(rightImg);
+
+            img.parentNode.insertBefore(wrapper, img);
+            wrapper.appendChild(img);
+            wrapper.appendChild(right);
         });
     }
 
@@ -54,7 +73,7 @@
 
     apply();
 
-    if (window.Lampa && Lampa.Listener) {
+    if (window.Lampa && window.Lampa.Listener) {
         Lampa.Listener.follow('app', apply);
     }
 })();
