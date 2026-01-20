@@ -3,7 +3,13 @@
 
     const STYLE_ID = 'ui-fixes-style';
 
-    const MARVEL_LOGO = './logo.png';
+    function getScriptBasePath() {
+        const script = document.currentScript;
+        if (!script) return null;
+
+        const src = script.src;
+        return src.substring(0, src.lastIndexOf('/') + 1);
+    }
 
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
@@ -20,12 +26,17 @@
     }
 
     function replaceMarvelLogo() {
+        const basePath = getScriptBasePath();
+        if (!basePath) return;
+
+        const logoUrl = basePath + 'logo.png';
+
         document.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
             if (img.dataset.marvelReplaced) return;
             img.dataset.marvelReplaced = '1';
 
-            img.src = MARVEL_LOGO;
-            img.srcset = MARVEL_LOGO;
+            img.src = logoUrl;
+            img.srcset = logoUrl;
         });
     }
 
