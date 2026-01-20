@@ -17,6 +17,11 @@
                 padding-right: 1px;
             }
 
+            /* Network logo spacing fix */
+            .applecation__network {
+                margin-bottom: 1px;
+            }
+
             /* Marvel Studios — remove forced invert */
             img[alt="Marvel Studios"] {
                 filter: none !important;
