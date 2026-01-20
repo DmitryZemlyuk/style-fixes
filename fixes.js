@@ -2,13 +2,19 @@
     'use strict';
 
     function injectStyle() {
-        if (document.getElementById('app-info-svg-padding')) return;
+        if (document.getElementById('ui-fixes-style')) return;
 
         const style = document.createElement('style');
-        style.id = 'app-info-svg-padding';
+        style.id = 'ui-fixes-style';
         style.textContent = `
+            /* SVG padding fix */
             .applecation__info.show > span > div > svg {
                 padding-right: 1px;
+            }
+
+            /* Marvel Studios logo — disable invert/brightness */
+            img[alt="Marvel Studios"] {
+                filter: none !important;
             }
         `;
         document.head.appendChild(style);
