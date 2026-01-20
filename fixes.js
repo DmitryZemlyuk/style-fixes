@@ -20,7 +20,8 @@
             /* Marvel Studios — remove forced invert + spacing fix */
             img[alt="Marvel Studios"] {
                 filter: none !important;
-                margin-bottom: 1px;
+                margin-bottom: 1px !important;
+                padding-bottom: 1px !important;
             }
         `;
         document.head.appendChild(style);
