@@ -19,6 +19,7 @@
 
             /* Network logo spacing fix */
             .applecation__network {
+                display: inline-block;
                 margin-bottom: 1px;
             }
 
