@@ -14,6 +14,11 @@
             .applecation__info.show > span > div > svg {
                 padding-right: 1px;
             }
+
+            /* Marvel Studios — remove forced invert */
+            img[alt="Marvel Studios"] {
+                filter: none !important;
+            }
         `;
         document.head.appendChild(style);
     }
