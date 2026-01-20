@@ -2,12 +2,7 @@
     'use strict';
 
     const STYLE_ID = 'ui-fixes-style';
-
-    function getScriptBasePath() {
-        const script = document.currentScript;
-        if (!script || !script.src) return null;
-        return script.src.substring(0, script.src.lastIndexOf('/') + 1);
-    }
+    const MARVEL_LOGO = 'https://dmitryzemlyuk.github.io/style-fixes/logo.png';
 
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
@@ -24,15 +19,8 @@
     }
 
     function replaceMarvelLogo() {
-        const basePath = getScriptBasePath();
-        if (!basePath) return;
-
-        const logoUrl = basePath + 'logo.png';
-
         document.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
-            if (img.src === logoUrl) return;
-
-            img.src = logoUrl;
+            img.src = MARVEL_LOGO;
             img.removeAttribute('srcset');
         });
     }
@@ -50,5 +38,4 @@
 
     setTimeout(apply, 500);
     setTimeout(apply, 1500);
-
 })();
