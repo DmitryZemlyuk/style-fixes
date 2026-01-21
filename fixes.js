@@ -45,13 +45,6 @@
                 pointer-events: none;
                 z-index: -1;
             }
-    
-            .head__body,
-            .head__body svg,
-            .head__body svg use {
-                color: #fff !important;
-                fill: currentColor;
-            }
         `;
         document.head.appendChild(style);
     }
