@@ -39,7 +39,7 @@
                 background: linear-gradient(
                     to bottom,
                     rgba(0,0,0,.65),
-                    rgba(0,0,0,.35),
+                    rgba(0,0,0,.25),
                     rgba(0,0,0,0)
                 );
                 pointer-events: none;
