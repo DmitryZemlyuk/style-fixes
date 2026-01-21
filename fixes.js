@@ -13,6 +13,9 @@
         style.id = STYLE_ID;
         style.textContent = `
             /* SVG padding fix */
+            .applecation__info.show > span > div {
+                padding: 1px;
+            }
             .applecation__info.show > span > div > svg {
                 padding-right: 1px;
             }
