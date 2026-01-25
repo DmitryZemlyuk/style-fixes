@@ -35,6 +35,14 @@
     let observerStarted = false;
 
     /***********************
+     * HELPERS
+     ***********************/
+    function isModssSettingsPage() {
+        const params = new URLSearchParams(location.search);
+        return params.get('settings') === 'settings_modss';
+    }
+
+    /***********************
      * STYLE INJECT
      ***********************/
     function injectStyle() {
@@ -58,7 +66,6 @@
             }
 
             /* HEADER BODY OVERLAY */
-
             .head__body {
                 position: relative;
                 z-index: 2;
@@ -77,6 +84,11 @@
                 pointer-events: none;
                 z-index: -1;
             }
+
+            /* MODSS settings — hide titles */
+            .settings-param-title.modss-hidden {
+                display: none !important;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -93,6 +105,17 @@
     }
 
     /***********************
+     * HIDE MODSS TITLES
+     ***********************/
+    function hideModssTitles(root = document) {
+        if (!isModssSettingsPage()) return;
+
+        root.querySelectorAll('.settings-param-title').forEach(el => {
+            el.classList.add('modss-hidden');
+        });
+    }
+
+    /***********************
      * OBSERVER
      ***********************/
     function startObserver() {
@@ -103,7 +126,9 @@
             mutations.forEach(m => {
                 m.addedNodes.forEach(node => {
                     if (node.nodeType !== 1) return;
+
                     replaceMarvelLogo(node);
+                    hideModssTitles(node);
                 });
             });
         });
@@ -120,6 +145,7 @@
     function apply() {
         injectStyle();
         replaceMarvelLogo();
+        hideModssTitles();
         startObserver();
     }
 
