@@ -2,28 +2,27 @@
     'use strict';
 
     /************************
-     * HARD AD BLOCK (GLOBAL)
+     * ABSOLUTE AD KILL (DOM LEVEL)
      ************************/
     (function () {
-        const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
-        const origSet = desc.set;
-        const origInsert = Element.prototype.insertAdjacentHTML;
+        const origAppend = Node.prototype.appendChild;
+        const origInsert = Node.prototype.insertBefore;
 
-        Object.defineProperty(Element.prototype, 'innerHTML', {
-            get: desc.get,
-            set(html) {
-                if (typeof html === 'string' && html.includes('ad-server')) {
-                    html = html.replace(/<div class="ad-server"[\s\S]*?<\/div>\s*<\/div>/g, '');
-                }
-                return origSet.call(this, html);
-            }
-        });
+        function isAd(node) {
+            return node &&
+                node.nodeType === 1 &&
+                node.classList &&
+                node.classList.contains('ad-server');
+        }
 
-        Element.prototype.insertAdjacentHTML = function (pos, html) {
-            if (typeof html === 'string' && html.includes('ad-server')) {
-                html = html.replace(/<div class="ad-server"[\s\S]*?<\/div>\s*<\/div>/g, '');
-            }
-            return origInsert.call(this, pos, html);
+        Node.prototype.appendChild = function (node) {
+            if (isAd(node)) return node;
+            return origAppend.call(this, node);
+        };
+
+        Node.prototype.insertBefore = function (node, ref) {
+            if (isAd(node)) return node;
+            return origInsert.call(this, node, ref);
         };
     })();
 
