@@ -9,7 +9,7 @@
 
         Element.prototype.insertAdjacentHTML = function (pos, html) {
             if (typeof html === 'string' && html.includes('ad-server')) {
-                html = html.replace(/<div class="ad-server"[\\s\\S]*?<\\/div>\\s*<\\/div>/g, '');
+                html = html.replace(/<div class="ad-server"[\s\S]*?<\/div>\s*<\/div>/g, '');
             }
 
             return origInsert.call(this, pos, html);
