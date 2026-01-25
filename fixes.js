@@ -5,6 +5,7 @@
     const MARVEL_LOGO = 'https://dmitryzemlyuk.github.io/style-fixes/logo.png';
 
     let observerStarted = false;
+    let killerStarted = false;
 
     function isCardPage() {
         const params = new URLSearchParams(location.search);
@@ -57,62 +58,16 @@
                 pointer-events: none;
                 z-index: -1;
             }
+
+            /* ===== AD SERVER KILL ===== */
+
+            .ad-server {
+                display: none !important;
+            }
         `;
         document.head.appendChild(style);
     }
 
     function replaceMarvelLogo(root = document) {
         root.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
-            if (img.src === MARVEL_LOGO) return;
-
-            img.src = MARVEL_LOGO;
-            img.removeAttribute('srcset');
-        });
-    }
-
-    function removeAds(root = document) {
-        if (!isCardPage()) return;
-
-        root.querySelectorAll('.ad-server').forEach(el => el.remove());
-    }
-
-    function startObserver() {
-        if (observerStarted) return;
-        observerStarted = true;
-
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(m => {
-                m.addedNodes.forEach(node => {
-                    if (node.nodeType !== 1) return;
-
-                    if (node.tagName === 'IMG' && node.alt === 'Marvel Studios') {
-                        replaceMarvelLogo(node.parentNode);
-                        return;
-                    }
-
-                    replaceMarvelLogo(node);
-                    removeAds(node);
-                });
-            });
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    }
-
-    function apply() {
-        injectStyle();
-        replaceMarvelLogo();
-        removeAds();
-        startObserver();
-    }
-
-    apply();
-
-    if (window.Lampa && Lampa.Listener) {
-        Lampa.Listener.follow('activity', apply);
-        Lampa.Listener.follow('app', apply);
-    }
-})();
+            if
