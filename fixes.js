@@ -21,7 +21,8 @@
             }
     
             /* Marvel Studios — remove forced invert + spacing fix */
-            img[alt="Marvel Studios"] {
+            img[alt="Marvel Studios"],
+            img[alt="Hutch Parker Entertainment"] {
                 filter: none !important;
             }
     
