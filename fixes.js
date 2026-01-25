@@ -6,6 +6,17 @@
 
     let observerStarted = false;
 
+    function isCardPage() {
+        const params = new URLSearchParams(location.search);
+
+        return (
+            params.has('card') &&
+            params.get('media') === 'tv' &&
+            params.get('source') === 'tmdb' &&
+            params.get('select') === 'open'
+        );
+    }
+
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
 
@@ -60,7 +71,9 @@
     }
 
     function removeAds(root = document) {
-        root.querySelectorAll('.scroll__body > ad-server').forEach(el => el.remove());
+        if (!isCardPage()) return;
+
+        root.querySelectorAll('.scroll__body .ad-server').forEach(el => el.remove());
     }
 
     function startObserver() {
