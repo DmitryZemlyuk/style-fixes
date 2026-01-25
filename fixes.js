@@ -1,17 +1,28 @@
 (function () {
     'use strict';
 
-    /***********************
-     * HARD AD BLOCK (MODSS)
-     ***********************/
+    /************************
+     * HARD AD BLOCK (GLOBAL)
+     ************************/
     (function () {
+        const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        const origSet = desc.set;
         const origInsert = Element.prototype.insertAdjacentHTML;
+
+        Object.defineProperty(Element.prototype, 'innerHTML', {
+            get: desc.get,
+            set(html) {
+                if (typeof html === 'string' && html.includes('ad-server')) {
+                    html = html.replace(/<div class="ad-server"[\s\S]*?<\/div>\s*<\/div>/g, '');
+                }
+                return origSet.call(this, html);
+            }
+        });
 
         Element.prototype.insertAdjacentHTML = function (pos, html) {
             if (typeof html === 'string' && html.includes('ad-server')) {
                 html = html.replace(/<div class="ad-server"[\s\S]*?<\/div>\s*<\/div>/g, '');
             }
-
             return origInsert.call(this, pos, html);
         };
     })();
