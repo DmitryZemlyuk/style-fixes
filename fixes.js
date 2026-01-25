@@ -73,7 +73,7 @@
     function removeAds(root = document) {
         if (!isCardPage()) return;
 
-        root.querySelectorAll('.scroll__body .ad-server').forEach(el => el.remove());
+        root.querySelectorAll('.ad-server').forEach(el => el.remove());
     }
 
     function startObserver() {
