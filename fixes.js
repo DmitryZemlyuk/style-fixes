@@ -8,7 +8,7 @@
 
     function injectStyle() {
         if (document.getElementById(STYLE_ID)) return;
-    
+
         const style = document.createElement('style');
         style.id = STYLE_ID;
         style.textContent = `
@@ -19,20 +19,20 @@
             .applecation__info.show > span > div > svg {
                 padding-right: 1px;
             }
-    
+
             /* Marvel Studios — remove forced invert + spacing fix */
             img[alt="Marvel Studios"],
             img[alt="Hutch Parker Entertainment"] {
                 filter: none !important;
             }
-    
+
             /* ===== HEADER BODY OVERLAY FIX ===== */
-    
+
             .head__body {
                 position: relative;
                 z-index: 2;
             }
-    
+
             .head__body::before {
                 content: '';
                 position: absolute;
@@ -59,6 +59,10 @@
         });
     }
 
+    function removeAds(root = document) {
+        root.querySelectorAll('.scroll__body > ad-server').forEach(el => el.remove());
+    }
+
     function startObserver() {
         if (observerStarted) return;
         observerStarted = true;
@@ -74,6 +78,7 @@
                     }
 
                     replaceMarvelLogo(node);
+                    removeAds(node);
                 });
             });
         });
@@ -87,6 +92,7 @@
     function apply() {
         injectStyle();
         replaceMarvelLogo();
+        removeAds();
         startObserver();
     }
 
