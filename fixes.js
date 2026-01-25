@@ -42,6 +42,11 @@
         return params.get('settings') === 'settings_modss';
     }
 
+    function isSelectOpen() {
+        const params = new URLSearchParams(location.search);
+        return params.get('select') === 'open';
+    }
+
     /***********************
      * STYLE INJECT
      ***********************/
@@ -116,6 +121,17 @@
     }
 
     /***********************
+     * CLEAN SUBTITLE
+     ***********************/
+    function cleanSelectSubtitle(root = document) {
+        if (!isSelectOpen()) return;
+
+        root.querySelectorAll('.selectbox-item__subtitle').forEach(el => {
+            el.textContent = el.textContent.replace(/\s*\(.*?\)\s*$/, '');
+        });
+    }
+
+    /***********************
      * OBSERVER
      ***********************/
     function startObserver() {
@@ -129,6 +145,7 @@
 
                     replaceMarvelLogo(node);
                     hideModssTitles(node);
+                    cleanSelectSubtitle(node);
                 });
             });
         });
@@ -146,6 +163,7 @@
         injectStyle();
         replaceMarvelLogo();
         hideModssTitles();
+        cleanSelectSubtitle();
         startObserver();
     }
 
