@@ -42,6 +42,11 @@
         return params.get('settings') === 'settings_modss';
     }
 
+    function isParserSettingsPage() {
+        const params = new URLSearchParams(location.search);
+        return params.get('settings') === 'parser';
+    }
+
     function isSelectOpen() {
         const params = new URLSearchParams(location.search);
         return params.get('select') === 'open';
@@ -132,6 +137,15 @@
     }
 
     /***********************
+     * REMOVE JACKett URL2
+     ***********************/
+    function removeJackett(root = document) {
+        if (!isParserSettingsPage()) return;
+
+        root.querySelectorAll('.settings-param[data-name="jackett_url2"]').forEach(el => el.remove());
+    }
+
+    /***********************
      * OBSERVER
      ***********************/
     function startObserver() {
@@ -146,6 +160,7 @@
                     replaceMarvelLogo(node);
                     hideModssTitles(node);
                     cleanSelectSubtitle(node);
+                    removeJackett(node);
                 });
             });
         });
@@ -164,6 +179,7 @@
         replaceMarvelLogo();
         hideModssTitles();
         cleanSelectSubtitle();
+        removeJackett();
         startObserver();
     }
 
