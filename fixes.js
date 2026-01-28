@@ -190,6 +190,44 @@
     }
 
     /***********************
+     * BIND SELECT ITEMS (userscript fallback)
+     * Ensures Safari/touch fires the app's custom `hover:enter` event
+     ***********************/
+    function bindSelectItems(root = document){
+        try{
+            root.querySelectorAll('.selectbox-item.selector').forEach(item => {
+                if(item.dataset._selectFix) return;
+                item.dataset._selectFix = '1';
+
+                const handler = (e) => {
+                    try{
+                        // simple debounce to avoid double-activation
+                        const last = parseInt(item.dataset._lastActivate || '0', 10);
+                        if(Date.now() - last < 200) return;
+                        item.dataset._lastActivate = String(Date.now());
+
+                        e.stopPropagation && e.stopPropagation();
+
+                        const ev = document.createEvent('Event');
+                        ev.initEvent('hover:enter', false, true);
+                        item.dispatchEvent(ev);
+                    }
+                    catch(err){
+                        // silent
+                    }
+                };
+
+                if(window.PointerEvent) item.addEventListener('pointerup', handler);
+                else item.addEventListener('touchend', handler);
+                item.addEventListener('click', handler);
+            });
+        }
+        catch(e){
+            // ignore
+        }
+    }
+
+    /***********************
      * OBSERVER
      ***********************/
     function startObserver() {
@@ -212,12 +250,14 @@
                             : node.closest && node.closest('.selectbox');
 
                         if (selectbox) removeSelectboxDuplicates(selectbox);
+
+                        // bind our fallback handler for newly added items
+                        bindSelectItems(node);
                     });
                 } else if (m.type === 'attributes') {
                     const node = m.target;
                     if (node.nodeType !== 1) return;
 
-                    // if class changed inside a selectbox item, re-check that selectbox
                     const selectbox = node.classList && node.classList.contains('selectbox')
                         ? node
                         : node.closest && node.closest('.selectbox');
@@ -247,6 +287,9 @@
 
         document.querySelectorAll('.selectbox')
             .forEach(removeSelectboxDuplicates);
+
+        // bind existing items
+        bindSelectItems(document);
 
         startObserver();
     }
