@@ -37,19 +37,20 @@
     /***********************
      * HELPERS
      ***********************/
+    function params() {
+        return new URLSearchParams(location.search);
+    }
+
     function isModssSettingsPage() {
-        const params = new URLSearchParams(location.search);
-        return params.get('settings') === 'settings_modss';
+        return params().get('settings') === 'settings_modss';
     }
 
     function isParserSettingsPage() {
-        const params = new URLSearchParams(location.search);
-        return params.get('settings') === 'parser';
+        return params().get('settings') === 'parser';
     }
 
     function isSelectOpen() {
-        const params = new URLSearchParams(location.search);
-        return params.get('select') === 'open';
+        return params().get('select') === 'open';
     }
 
     /***********************
@@ -61,21 +62,14 @@
         const style = document.createElement('style');
         style.id = STYLE_ID;
         style.textContent = `
-            /* SVG padding fix */
-            .applecation__info.show > span > div {
-                padding: 1px;
-            }
-            .applecation__info.show > span > div > svg {
-                padding-right: 1px;
-            }
+            .applecation__info.show > span > div { padding: 1px; }
+            .applecation__info.show > span > div > svg { padding-right: 1px; }
 
-            /* Marvel Studios — remove forced invert + spacing fix */
             img[alt="Marvel Studios"],
             img[alt="Hutch Parker Entertainment"] {
                 filter: none !important;
             }
 
-            /* HEADER BODY OVERLAY */
             .head__body {
                 position: relative;
                 z-index: 2;
@@ -95,7 +89,6 @@
                 z-index: -1;
             }
 
-            /* MODSS settings — hide titles */
             .settings-param-title.modss-hidden {
                 display: none !important;
             }
@@ -104,7 +97,7 @@
     }
 
     /***********************
-     * MARVEL LOGO REPLACE
+     * MARVEL LOGO
      ***********************/
     function replaceMarvelLogo(root = document) {
         root.querySelectorAll('img[alt="Marvel Studios"]').forEach(img => {
@@ -115,14 +108,13 @@
     }
 
     /***********************
-     * HIDE MODSS TITLES
+     * MODSS SETTINGS
      ***********************/
     function hideModssTitles(root = document) {
         if (!isModssSettingsPage()) return;
 
-        root.querySelectorAll('.settings-param-title').forEach(el => {
-            el.classList.add('modss-hidden');
-        });
+        root.querySelectorAll('.settings-param-title')
+            .forEach(el => el.classList.add('modss-hidden'));
     }
 
     /***********************
@@ -137,12 +129,41 @@
     }
 
     /***********************
-     * REMOVE JACKett URL2
+     * REMOVE JACKett
      ***********************/
     function removeJackett(root = document) {
         if (!isParserSettingsPage()) return;
 
-        root.querySelectorAll('.settings-param[data-name="jackett_url2"]').forEach(el => el.remove());
+        root.querySelectorAll('.settings-param[data-name="jackett_url2"]')
+            .forEach(el => el.remove());
+    }
+
+    /***********************
+     * REMOVE DUPLICATES IN SELECTBOX
+     ***********************/
+    function removeSelectboxDuplicates(root = document) {
+        if (!isSelectOpen()) return;
+
+        root.querySelectorAll('.scroll__body').forEach(body => {
+            const seen = new Set();
+
+            body.querySelectorAll('.selectbox-item').forEach(item => {
+                const title = item.querySelector('.selectbox-item__title');
+                if (!title) return;
+
+                const raw = title.textContent.trim();
+
+                const key = raw
+                    .replace(/^\d+\s*\/\s*/i, '')
+                    .toLowerCase();
+
+                if (seen.has(key)) {
+                    item.remove();
+                } else {
+                    seen.add(key);
+                }
+            });
+        });
     }
 
     /***********************
@@ -161,6 +182,7 @@
                     hideModssTitles(node);
                     cleanSelectSubtitle(node);
                     removeJackett(node);
+                    removeSelectboxDuplicates(node);
                 });
             });
         });
@@ -180,6 +202,7 @@
         hideModssTitles();
         cleanSelectSubtitle();
         removeJackett();
+        removeSelectboxDuplicates();
         startObserver();
     }
 
