@@ -149,21 +149,22 @@
 
         const items = scrollContent.querySelectorAll('.selectbox-item__title');
         if (items.length < 2) return;
-
         function normalizeKey(text) {
-            return text
-                .replace(/^\s*\d+\s*\/\s*/,'')              // remove leading "N /"
-                .replace(/\s*\(.*?\)\s*$/,'')               // remove trailing parentheses
-                .replace(/\//g,' ')                            // slashes -> spaces
-                .replace(/[^0-9a-zа-яё\s]+/gi,' ')             // remove punctuation
+            const cleaned = text
+                .replace(/^\s*\d+\s*\/\s*/,'')   // remove leading "N /"
+                .replace(/\s*\(.*?\)\s*$/,'')      // remove trailing parentheses
+                .replace(/\//g,' ')                  // slashes -> spaces
+                .replace(/[^0-9a-zа-яё\s]+/gi,' ')   // remove punctuation
                 .toLowerCase()
-                .split(/\s+/)
-                .filter(Boolean)
-                .slice(0,6)                                    // limit tokens for key
-                .join(' ');
+                .trim();
+
+            const tokens = cleaned.split(/\s+/).filter(Boolean);
+            // remove duplicate tokens while preserving order
+            const uniq = tokens.filter((t, i, a) => a.indexOf(t) === i);
+            return uniq.slice(0,6).join(' ');
         }
 
-        const seen = new Map(); // key -> element
+        const groups = new Map(); // key -> Array<element>
 
         items.forEach(titleEl => {
             const item = titleEl.closest('.selectbox-item');
@@ -172,19 +173,19 @@
             const raw = titleEl.textContent || '';
             const key = normalizeKey(raw);
 
-            const prev = seen.get(key);
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(item);
+        });
 
-            if (prev) {
-                // prefer element that currently has the `selected` class
-                if (item.classList.contains('selected')) {
-                    prev.remove();
-                    seen.set(key, item);
-                } else {
-                    item.remove();
-                }
-            } else {
-                seen.set(key, item);
-            }
+        // For each group keep only one element (prefer selected)
+        groups.forEach(group => {
+            if (group.length < 2) return;
+
+            let keeper = group.find(el => el.classList.contains('selected')) || group[0];
+
+            group.forEach(el => {
+                if (el !== keeper) el.remove();
+            });
         });
     }
 
