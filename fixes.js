@@ -277,6 +277,48 @@
     }
 
     /***********************
+     * FORCE HLS TYPE PATCH
+     * This snippet forces `hls_type` to 'hlsjs' and sets player_hls_method in localStorage.
+     * It waits for the `Lampa` object and patches `Lampa.Player.playdata` when available.
+     ***********************/
+    (function forceHls(){
+        function doPatch(){
+            try{
+                if(window.Lampa && Lampa.Player){
+                    // Patch playdata if it's a function
+                    if(typeof Lampa.Player.playdata === 'function'){
+                        const orig = Lampa.Player.playdata.bind(Lampa.Player);
+
+                        Lampa.Player.playdata = function(){
+                            try{
+                                const pd = orig() || {};
+                                pd.hls_type = 'hlsjs';
+                                pd.hls_manifest_timeout = pd.hls_manifest_timeout || 10000;
+                                pd.hls_retry_timeout = pd.hls_retry_timeout || 30000;
+                                try{ localStorage.setItem('player_hls_method','hlsjs'); }catch(e){}
+                                return pd;
+                            }
+                            catch(e){ return orig(); }
+                        };
+                    }
+                    else if (Lampa.Player.playdata && typeof Lampa.Player.playdata === 'object'){
+                        Lampa.Player.playdata.hls_type = 'hlsjs';
+                        try{ localStorage.setItem('player_hls_method','hlsjs'); }catch(e){}
+                    }
+
+                    console.info('force-hls: applied');
+                    return true;
+                }
+            }
+            catch(e){}
+
+            return false;
+        }
+
+        if(!doPatch()) setTimeout(forceHls, 200);
+    })();
+
+    /***********************
      * APPLY
      ***********************/
     function apply() {
