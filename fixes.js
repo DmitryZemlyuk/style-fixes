@@ -217,9 +217,10 @@
                     }
                 };
 
-                if(window.PointerEvent) item.addEventListener('pointerup', handler);
-                else item.addEventListener('touchend', handler);
-                item.addEventListener('click', handler);
+                // For pointer-capable browsers use pointerup, fallback to touchend or mouseup
+                if(window.PointerEvent) item.addEventListener('pointerup', (e)=>{ e.preventDefault && e.preventDefault(); handler(e); });
+                else if('ontouchend' in window) item.addEventListener('touchend', (e)=>{ e.preventDefault && e.preventDefault(); handler(e); });
+                else item.addEventListener('mouseup', (e)=>{ e.preventDefault && e.preventDefault(); handler(e); });
             });
         }
         catch(e){
