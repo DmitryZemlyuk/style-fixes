@@ -198,24 +198,40 @@
 
         const observer = new MutationObserver(mutations => {
             mutations.forEach(m => {
-                m.addedNodes.forEach(node => {
+                if (m.type === 'childList') {
+                    m.addedNodes.forEach(node => {
+                        if (node.nodeType !== 1) return;
+
+                        replaceMarvelLogo(node);
+                        hideModssTitles(node);
+                        cleanSelectSubtitle(node);
+                        removeJackett(node);
+
+                        const selectbox = node.classList && node.classList.contains('selectbox')
+                            ? node
+                            : node.closest && node.closest('.selectbox');
+
+                        if (selectbox) removeSelectboxDuplicates(selectbox);
+                    });
+                } else if (m.type === 'attributes') {
+                    const node = m.target;
                     if (node.nodeType !== 1) return;
 
-                    replaceMarvelLogo(node);
-                    hideModssTitles(node);
-                    cleanSelectSubtitle(node);
-                    removeJackett(node);
+                    // if class changed inside a selectbox item, re-check that selectbox
+                    const selectbox = node.classList && node.classList.contains('selectbox')
+                        ? node
+                        : node.closest && node.closest('.selectbox');
 
-                    if (node.classList.contains('selectbox')) {
-                        removeSelectboxDuplicates(node);
-                    }
-                });
+                    if (selectbox) removeSelectboxDuplicates(selectbox);
+                }
             });
         });
 
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class']
         });
     }
 
