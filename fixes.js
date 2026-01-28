@@ -143,20 +143,25 @@
      ***********************/
     function removeSelectboxDuplicates(root = document) {
         if (!isSelectOpen()) return;
-
+    
         root.querySelectorAll('.scroll__body').forEach(body => {
             const seen = new Set();
-
+    
             body.querySelectorAll('.selectbox-item').forEach(item => {
-                const title = item.querySelector('.selectbox-item__title');
-                if (!title) return;
-
-                const raw = title.textContent.trim();
-
-                const key = raw
-                    .replace(/^\d+\s*\/\s*/i, '')
-                    .toLowerCase();
-
+                const titleEl = item.querySelector('.selectbox-item__title');
+                if (!titleEl) return;
+    
+                const text = titleEl.textContent.trim();
+    
+                // "3 / ukr / UKR Forced"
+                const match = text.match(/^\d+\s*\/\s*([a-z]{3})\s*\/\s*[A-Z]{3}(.*)?$/i);
+                if (!match) return;
+    
+                const lang = match[1].toLowerCase();
+                const forced = /forced/i.test(text);
+    
+                const key = forced ? `${lang}_forced` : lang;
+    
                 if (seen.has(key)) {
                     item.remove();
                 } else {
@@ -165,6 +170,7 @@
             });
         });
     }
+
 
     /***********************
      * OBSERVER
