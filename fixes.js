@@ -141,39 +141,32 @@
     /***********************
      * REMOVE DUPLICATES IN SELECTBOX
      ***********************/
-    function removeSelectboxDuplicates() {
-        if (!isSelectOpen()) return;
-    
-        document.querySelectorAll('.selectbox.animate .scroll__body').forEach(body => {
-            const seen = new Set();
-    
-            [...body.children].forEach(item => {
-                if (!item.classList.contains('selectbox-item')) return;
-    
-                const titleEl = item.querySelector('.selectbox-item__title');
-                if (!titleEl) return;
-    
-                const text = titleEl.textContent.trim();
-    
-                if (!text.includes('/')) return;
-    
-                const forced = /forced/i.test(text);
-                const parts = text.split('/');
-                if (parts.length < 2) return;
-    
-                const lang = parts[1].trim().toLowerCase();
-                const key = forced ? `${lang}_forced` : lang;
-    
-                if (seen.has(key)) {
-                    item.remove();
-                } else {
-                    seen.add(key);
-                }
-            });
+    function removeSelectboxDuplicates(root) {
+        if (!root) return;
+
+        const scrollContent = root.querySelector('.scroll__content');
+        if (!scrollContent) return;
+
+        const items = scrollContent.querySelectorAll('.selectbox-item__title');
+        if (items.length < 5) return;
+
+        const seen = new Set();
+
+        items.forEach(titleEl => {
+            const item = titleEl.closest('.selectbox-item');
+            if (!item) return;
+
+            const key = titleEl.textContent
+                .replace(/^\d+\s*\/\s*/,'') // "3 / "
+                .trim();
+
+            if (seen.has(key)) {
+                item.remove();
+            } else {
+                seen.add(key);
+            }
         });
     }
-
-
 
     /***********************
      * OBSERVER
@@ -191,7 +184,10 @@
                     hideModssTitles(node);
                     cleanSelectSubtitle(node);
                     removeJackett(node);
-                    removeSelectboxDuplicates(node);
+
+                    if (node.classList.contains('selectbox')) {
+                        removeSelectboxDuplicates(node);
+                    }
                 });
             });
         });
@@ -211,7 +207,10 @@
         hideModssTitles();
         cleanSelectSubtitle();
         removeJackett();
-        removeSelectboxDuplicates();
+
+        document.querySelectorAll('.selectbox')
+            .forEach(removeSelectboxDuplicates);
+
         startObserver();
     }
 
