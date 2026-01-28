@@ -148,22 +148,42 @@
         if (!scrollContent) return;
 
         const items = scrollContent.querySelectorAll('.selectbox-item__title');
-        if (items.length < 5) return;
+        if (items.length < 2) return;
 
-        const seen = new Set();
+        function normalizeKey(text) {
+            return text
+                .replace(/^\s*\d+\s*\/\s*/,'')              // remove leading "N /"
+                .replace(/\s*\(.*?\)\s*$/,'')               // remove trailing parentheses
+                .replace(/\//g,' ')                            // slashes -> spaces
+                .replace(/[^0-9a-zа-яё\s]+/gi,' ')             // remove punctuation
+                .toLowerCase()
+                .split(/\s+/)
+                .filter(Boolean)
+                .slice(0,6)                                    // limit tokens for key
+                .join(' ');
+        }
+
+        const seen = new Map(); // key -> element
 
         items.forEach(titleEl => {
             const item = titleEl.closest('.selectbox-item');
             if (!item) return;
 
-            const key = titleEl.textContent
-                .replace(/^\d+\s*\/\s*/,'') // "3 / "
-                .trim();
+            const raw = titleEl.textContent || '';
+            const key = normalizeKey(raw);
 
-            if (seen.has(key)) {
-                item.remove();
+            const prev = seen.get(key);
+
+            if (prev) {
+                // prefer element that currently has the `selected` class
+                if (item.classList.contains('selected')) {
+                    prev.remove();
+                    seen.set(key, item);
+                } else {
+                    item.remove();
+                }
             } else {
-                seen.add(key);
+                seen.set(key, item);
             }
         });
     }
