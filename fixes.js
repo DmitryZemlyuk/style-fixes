@@ -67,6 +67,9 @@
             body.platform--apple.touch-device {
              background: #000 !important;
             }
+            body.platform--apple.touch-device .navigation-bar__body {
+              backdrop-filter: blur(0.1em)!important;
+            }
             .applecation__info.show > span > div { padding: 1px; }
             .applecation__info.show > span > div > svg { padding-right: 1px; }
 
